@@ -18,6 +18,7 @@ from tg_assistant.bot.routers.links import router as links_router
 from tg_assistant.services.reminders import remind_overdue_tasks
 from tg_assistant.services.ollama_service import OllamaService
 from tg_assistant.services.chroma_service import ChromaService
+from tg_assistant.services.speech_to_text import SpeechToTextService
 
 
 async def main() -> None:
@@ -42,7 +43,11 @@ async def main() -> None:
         logging.exception("Chroma unavailable, continue without it for now")
         chroma = None
 
-    dp.update.middleware(ServicesMiddleware(ollama=ollama, chroma=chroma))
+    speech_to_text = SpeechToTextService()
+
+    dp.update.middleware(
+        ServicesMiddleware(ollama=ollama, chroma=chroma, speech_to_text=speech_to_text)
+    )
 
     # Routers (подключаем ДО polling) [web:371]
     dp.include_router(start_router)
