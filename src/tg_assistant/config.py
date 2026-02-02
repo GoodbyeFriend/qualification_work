@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     database_url: str
     chroma_host: str = "chroma"
     chroma_port: int = 8000
+    whisper_model: str = "base"
+    whisper_device: str = "cpu"
+    whisper_compute_type: str = "int8"
+    whisper_language: str | None = "ru"
     @property
     def admin_ids(self) -> set[int]:
         if not self.admin_user_ids.strip():
