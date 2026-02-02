@@ -13,10 +13,8 @@ from tg_assistant.services.rerank_service import RerankService
 from tg_assistant.db.models.files import StoredFile
 from tg_assistant.db.models.user import User
 from tg_assistant.db.models.link import Link
-from tg_assistant.config import settings
 from tg_assistant.services.ollama_service import OllamaService
 from tg_assistant.services.chroma_service import ChromaService
-from tg_assistant.services.speech_to_text import SpeechToTextService
 
 logger = logging.getLogger(__name__)
 router = Router()
