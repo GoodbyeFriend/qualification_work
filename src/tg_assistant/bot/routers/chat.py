@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import asyncio
 import logging
+from pathlib import Path
+import shutil
 from typing import Any
 
 from aiogram import Router, F
@@ -10,26 +13,18 @@ from sqlalchemy import select
 from tg_assistant.services.rerank_service import RerankService
 from tg_assistant.db.models.files import StoredFile
 from tg_assistant.db.models.user import User
+from tg_assistant.db.models.link import Link
+from tg_assistant.config import settings
 from tg_assistant.services.ollama_service import OllamaService
 from tg_assistant.services.chroma_service import ChromaService
-from tg_assistant.db.models.link import Link
-
+from tg_assistant.services.speech_to_text import SpeechToTextService
 
 logger = logging.getLogger(__name__)
 router = Router()
 
-FILE_INTENT_KEYWORDS = {
-    "файл", "документ", "pdf", "docx", "скинь", "пришли", "отправь", "верни", "дай",
-}
-
 FILE_DISTANCE_THRESHOLD = 0.90
+LINK_DISTANCE_THRESHOLD = 0.90
 AMBIGUOUS_DELTA = 0.05
-
-
-def wants_file(text: str) -> bool:
-    t = text.lower()
-    return any(k in t for k in FILE_INTENT_KEYWORDS)
-from tg_assistant.db.models.link import Link
 
 def pick_best_links(hits: list[dict[str, Any]]) -> list[dict[str, Any]]:
     link_hits = [h for h in hits if (h.get("metadata") or {}).get("entity_type") == "link"]
@@ -85,18 +80,19 @@ def pick_best_files(hits: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
     return sorted(best_by_file.values(), key=lambda x: x["distance"])
 
-@router.message(F.text & ~F.text.startswith("/"))
-async def chat_handler(
+async def handle_text_query(
     message: Message,
     session,
     current_user: User,
     ollama: OllamaService,
     chroma: ChromaService | None,
+    text: str,
+    status_message: Message | None = None,
 ) -> None:
-    text = (message.text or "").strip()
+    text = text.strip()
     if not text:
         return
-    status = await message.answer("Определяю тип запроса")
+    status = status_message or await message.answer("Определяю тип запроса")
 
     intent_data = await ollama.classify_intent(text)
     intent = (intent_data or {}).get("intent", "qa")
@@ -203,8 +199,38 @@ async def chat_handler(
                 await status.edit_text("Похожих ссылок не нашлось. Попробуй уточнить или посмотри /links")
                 return
 
-            best = candidates[0]
+            if len(candidates) >= 2:
+                d0 = float(candidates[0].get("distance") or 999.0)
+                d1 = float(candidates[1].get("distance") or 999.0)
+                if d0 <= LINK_DISTANCE_THRESHOLD and (d1 - d0) >= AMBIGUOUS_DELTA:
+                    reranked_links = candidates[:1]
+                else:
+                    await status.edit_text("Нашёл кандидатов, уточняю релевантность (rerank)...")
+                    reranked_links = await reranker.rerank_hits_oneshot(
+                        search_query,
+                        candidates[:8],
+                        max_items=min(8, len(candidates)),
+                        timeout_s=240,
+                    )
+            else:
+                reranked_links = candidates[:1]
+
+            best = reranked_links[0]
             link_id = int(best["metadata"]["entity_id"])
+            best_distance = float(best.get("distance") or 999.0)
+
+            if best_distance > LINK_DISTANCE_THRESHOLD:
+                lines = ["Нашёл несколько похожих ссылок, но не уверен. Выбери вручную:"]
+                for c in candidates[:3]:
+                    m = c["metadata"]
+                    title = m.get("title") or m.get("url") or "без названия"
+                    lines.append(
+                        f"#{m['entity_id']} — {title} "
+                        f"(dist={float(c.get('distance') or 0.0):.3f})"
+                    )
+                lines.append("Можно отправить так: /link ID")
+                await status.edit_text("\n".join(lines))
+                return
 
             stmt = select(Link).where(Link.id == link_id, Link.user_id == current_user.id)
             res = await session.execute(stmt)
@@ -247,3 +273,117 @@ async def chat_handler(
             await status.edit_text("Ошибка при обработке запроса. Посмотри логи бота.")
         except Exception:
             pass
+
+
+async def convert_voice_to_wav(source_path: Path, target_path: Path) -> None:
+    process = await asyncio.create_subprocess_exec(
+        "ffmpeg",
+        "-y",
+        "-i",
+        str(source_path),
+        "-ar",
+        "16000",
+        "-ac",
+        "1",
+        str(target_path),
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await process.communicate()
+    if process.returncode != 0:
+        raise RuntimeError(
+            f"ffmpeg failed with code {process.returncode}: {stderr.decode(errors='ignore') or stdout.decode(errors='ignore')}"
+        )
+
+
+@router.message(F.voice)
+async def voice_handler(
+    message: Message,
+    bot,
+    session,
+    current_user: User,
+    ollama: OllamaService,
+    chroma: ChromaService | None,
+    speech_to_text: SpeechToTextService | None,
+) -> None:
+    import shutil
+
+    from tg_assistant.config import settings
+
+    voice = message.voice
+    if voice is None:
+        return
+
+    if shutil.which("ffmpeg") is None:
+        await message.answer("ffmpeg не найден. Установи ffmpeg для обработки голосовых сообщений.")
+        return
+
+    status = await message.answer("Распознаю голосовое сообщение...")
+
+    base_dir = Path(settings.data_dir) / "voice" / str(current_user.id)
+    base_dir.mkdir(parents=True, exist_ok=True)
+
+    file_key = voice.file_unique_id or voice.file_id
+    ogg_path = base_dir / f"voice_{file_key}.ogg"
+    wav_path = base_dir / f"voice_{file_key}.wav"
+
+    try:
+        file = await bot.get_file(voice.file_id)
+        await bot.download_file(file.file_path, destination=ogg_path)
+
+        await convert_voice_to_wav(ogg_path, wav_path)
+    except Exception:
+        logger.exception("Failed to download or convert voice message")
+        await status.edit_text("Не удалось обработать голосовое сообщение. Проверь ffmpeg и попробуй снова.")
+        ogg_path.unlink(missing_ok=True)
+        wav_path.unlink(missing_ok=True)
+        return
+
+    if speech_to_text is None:
+        await status.edit_text("Распознавание голоса не настроено.")
+        ogg_path.unlink(missing_ok=True)
+        wav_path.unlink(missing_ok=True)
+        return
+
+    try:
+        transcript = await speech_to_text.transcribe(wav_path)
+    except Exception:
+        logger.exception("Speech-to-text failed")
+        await status.edit_text("Не удалось распознать голосовое сообщение.")
+        return
+    finally:
+        ogg_path.unlink(missing_ok=True)
+        wav_path.unlink(missing_ok=True)
+
+    if not transcript:
+        await status.edit_text("Не удалось распознать текст из голосового сообщения.")
+        return
+
+    await status.edit_text(f"Распознал: {transcript}\nОбрабатываю запрос...")
+    await handle_text_query(
+        message=message,
+        session=session,
+        current_user=current_user,
+        ollama=ollama,
+        chroma=chroma,
+        text=transcript,
+        status_message=status,
+    )
+
+
+@router.message(F.text & ~F.text.startswith("/"))
+async def chat_handler(
+    message: Message,
+    session,
+    current_user: User,
+    ollama: OllamaService,
+    chroma: ChromaService | None,
+) -> None:
+    await handle_text_query(
+        message=message,
+        session=session,
+        current_user=current_user,
+        ollama=ollama,
+        chroma=chroma,
+        text=(message.text or ""),
+    )
