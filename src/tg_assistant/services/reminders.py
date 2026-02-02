@@ -20,9 +20,6 @@ async def remind_overdue_tasks(bot: Bot) -> None:
                 Task.status == "open",
                 Task.due_at.is_not(None),
                 Task.due_at <= now,
-                (Task.last_reminded_at.is_(None)) |
-                (Task.last_reminded_at <= 
-                 (now - timedelta(minutes=Task.remind_every_minutes))),
             )
             .limit(50)
         )
@@ -30,6 +27,13 @@ async def remind_overdue_tasks(bot: Bot) -> None:
         rows = res.all()
 
         for task, tg_user_id in rows:
+            if task.last_reminded_at is not None:
+                next_reminder_at = task.last_reminded_at + timedelta(
+                    minutes=task.remind_every_minutes
+                )
+                if next_reminder_at > now:
+                    continue
+
             await bot.send_message(
                 tg_user_id,
                 f"Напоминание ({task.remind_every_minutes}): задача #{task.id} просрочена\n{task.text}",
