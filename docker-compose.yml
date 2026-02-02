@@ -1,0 +1,31 @@
+services:
+  bot:
+    build: .
+    
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+      - ./data:/data
+    networks:
+      - llm-net
+    restart: unless-stopped
+    depends_on:
+      - chroma
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/data
+    volumes:
+      - chroma-data:/data
+    networks: [llm-net]
+    restart: unless-stopped
+
+  
+volumes:
+  chroma-data:
+
+networks:
+  llm-net:
+    external: true

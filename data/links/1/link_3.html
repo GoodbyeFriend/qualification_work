@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head><style>#body2{display:none}</style>
+
+<script src="query.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+<title>Твой Тренер</title>
+<meta name="Description" content="Твой Тренер">
+<script type="text/jscript" charset="utf-8" src="js/head.js"></script>
+<script type="text/javascript" src="js/typeface-0.11.js"></script>
+<script type="text/javascript" src="js/moj-font.typeface.js"></script>
+<!--<script type="text/javascript" src="https://vk.com/js/api/openapi.js?168"></script>-->
+
+</head>
+<body><div style="width:1in" id="inches"></div><div id="body2"> 
+    <div id="kolvo_vh" style="display:none; position:fixed; top:0pt; left:0pt; right:0pt; bottom:0pt; background-color:#FFF; z-index:100; padding:10pt; padding-top:35pt; overflow-y: auto"></div>
+
+ <script type="text/jscript" >
+/*
+//Добавление или замена данных значения переменной
+openRequest.onsuccess = function() {
+openRequest.result.transaction('baza', "readwrite").objectStore("baza").put({value:'mal12', name:'shrift'});
+//Поиск значения переменной
+var poisk_bd = openRequest.result.transaction("baza").objectStore("baza").get('shrift');
+poisk_bd.onsuccess = function() {var val = poisk_bd.result.value};}
+*/
+
+
+
+ var localStorage = window.localStorage;
+if (/iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {var men_vniz = 'img/fon/men_niz_ios.jpg'} else {var men_vniz = 'img/fon/men_niz_android.jpg'}
+if (document.location.href.indexOf('tvoytrener.com') != -1) {var men_verh = 'img/fon/men_verh_sait.jpg'} else {var men_verh = 'img/fon/men_verh_app.jpg'}
+
+if(window.location.search != '?doma' && !localStorage.getItem('pomogite')){
+if(!localStorage.getItem('kolvo_vh')){var kolvo_vh = 1; localStorage.setItem('kolvo_vh', kolvo_vh)} else{var kolvo_vh = Number(localStorage.getItem('kolvo_vh'));kolvo_vh ++;localStorage.setItem('kolvo_vh', kolvo_vh)}
+
+if(!localStorage.getItem('pol')){var polp = 'net'} else{var polp = localStorage.getItem('pol')}
+if(!localStorage.getItem('cel')){var celp = 'net'} else{var celp = localStorage.getItem('cel')}
+if(kolvo_vh % 10 == 0){var pos_stran = localStorage.getItem('posl_stranica');
+$.ajax({
+type: "POST", 
+url: "https://apptrener.com/app_php/poblagodarit5.php",
+data: {polp:polp, celp:celp, versia:versia},
+crossDomain: true,
+success: function(rez) {
+if(document.location.href.indexOf('tvoytrener.com') != -1){
+rez = rez.replace("моё приложение", "мой сайт")
+rez = rez.replace("оно существует", "он существует")
+rez = rez.replace("оно полностью бесплатное", "он полностью бесплатен")
+rez = rez.replace("на приложение", "на сайт")
+}
+if(rez == ''){}
+else{document.getElementById('kolvo_vh').innerHTML= rez; document.getElementById('kolvo_vh').style.display = 'block';}},
+error: function() {var kolvo_vh = Number(localStorage.getItem('kolvo_vh'));kolvo_vh = kolvo_vh - 1;localStorage.setItem('kolvo_vh', kolvo_vh); posl_stranica()}
+});}
+else{posl_stranica()}}
+else{posl_stranica()}
+
+function pom_net2(){localStorage.setItem('pomogite', '1'); document.getElementById('popopo').innerHTML = 'Спасибо! Мне важна каждая помощь.'; $(".param").fadeIn('fast'); setTimeout(pom_net, 4000)}
+
+function pom_net(){if(document.location.href.indexOf('tvoytrener.com') == -1){localStorage.setItem('posl_stranica', pos_stran); posl_stranica()} else{document.getElementById('kolvo_vh').style.display = 'none'}}
+function posl_stranica(){if(localStorage.getItem('posl_stranica')){
+if(localStorage.getItem('posl_stranica').indexOf('index.html') != -1 && document.getElementById('kolvo_vh')){document.getElementById('kolvo_vh').style.display = 'none'}
+if(localStorage.getItem('domstr')){
+ if(window.location.search != '?doma'){
+window.location.href = localStorage.getItem('domstr')
+//$.ajax({
+//    type: 'HEAD',
+//    url: localStorage.getItem('domstr'),
+//success: function() {window.location.href = localStorage.getItem('domstr')},
+//error: function() {}, timeout: 10000});
+}}
+else{
+if(localStorage.getItem('posl_stranica') && window.location.search != '?doma'  && localStorage.getItem('posl_stranica').indexOf('index.html') == -1 && document.location.href.indexOf('tvoytrener.com') == -1){
+window.location.href = localStorage.getItem('posl_stranica')
+//$.ajax({
+//    type: 'HEAD',
+//    url: localStorage.getItem('posl_stranica'),
+//success: function() {window.location.href = localStorage.getItem('posl_stranica')},
+//error: function() {}, timeout: 10000});
+}}}}
+
+function bloki_t() {if($('#bloki_tren01').css('display') != 'none'){$('#bloki_tren1').css('color',cvet_osn2);$('#bloki_tren1').css('border-color',cvet_osn2);
+ $('#bloki_tren1').css('background', 'linear-gradient(90deg, '+cvet_osn2+' 0%, '+cvet_osn2+' 4%, rgba(255,255,255,0) 20%)')}
+else{$('#bloki_tren1').css('color','#E89F09');$('#bloki_tren1').css('border-color','#E89F09');$('#bloki_tren1').css('background', 'linear-gradient(90deg, rgba(232,159,9,1) 0%, rgba(232,159,9,1) 4%, rgba(255,255,255,0) 20%)')}$('#bloki_tren01').slideToggle();}
+</script> 
+    
+<div id="rez_meniy"><div id="poisk7" ></div></div><table  cellspacing="0" cellpadding="0" id="v_b"><tr><td id="l_b"> 
+
+<div id="rez_meniy2"></div>
+
+<script type="text/jscript" charset="utf-8" src="js/meniy3.js"></script>
+
+<!--<div style="max-width:200pt; min-width: 190pt; white-space: nowrap;  margin:0 auto; text-align: center; font-weight: 900; color: #6D81BB">
+<div style="font-size: 26pt; margin-top: 17pt; border-radius:7pt; line-height:14pt">
+<img src="img/fon/men/logo.png" style="height:35pt;float:left; margin-top: -3pt;"/><font style=" color:#FFF;  text-shadow:
+    -1pt -1pt 0 #6D81BB,
+     0   -1pt 0 #6D81BB,
+     1pt -1pt 0 #6D81BB,
+     1pt  0   0 #6D81BB,
+     1pt  1pt 0 #6D81BB,
+     0    1pt 0 #6D81BB,
+    -1pt  1pt 0 #6D81BB,
+    -1pt  0   0 #6D81BB;">ТВОЙ ТРЕНЕР</font><br>
+<font style="font-size:12pt">проект, который тренирует</font></div>
+</div>-->
+<center><div style="max-width:230pt; text-align:left; line-height:17pt; font-size:14pt;margin-top:7pt;"><img src="img/fon/logo3.png" style=" width:95%; max-width:100pt; margin-top:5pt; float:left; margin-right:9pt;margin-top:2pt; border-radius:0pt;"/>
+<div id="plan_zakaz"><a  class="qjq" href="int/kompleks.html">Заказать<br>индивидуальный<br>план тренировок</a></div></div></center>
+<div style="clear: both;"></div>
+<h1 style="display:none">Главная страница</h1>
+
+
+
+<div id="komputer3" style="display: none;" >
+<center><h2 style="margin-top:12pt">Скачайте наше приложение:</h2></center>
+<center><table><tr><td>
+<center><a href="https://itunes.apple.com/us/app/id1299904851" target="_blank" ><img src="img/fon/app_ios.png" style="height: 47pt; width: 47pt; margin-right: 12pt; float: left; margin-bottom: 5pt; margin-top: 1pt;" /></a>
+<a href="https://play.google.com/store/apps/details?id=com.tvoytrener.timkoilia"  target="_blank"  ><img src="img/fon/app_android.png" style="height: 47pt; width: 47pt; margin-right: 12pt; float: left; margin-bottom: 5pt; margin-top: 1pt;" /></a>
+<a href="https://www.rustore.ru/catalog/app/com.tvoytrener.timkoilia"  target="_blank"  ><img src="img/fon/app_ru.png" style="height: 47pt; width: 47pt; margin-right: 12pt; float: left; margin-bottom: 5pt; margin-top: 1pt;" /></a>
+<a href="https://appgallery.huawei.com/app/C101715089"  target="_blank"  ><img src="img/fon/app_hu.png" style="height: 47pt; width: 47pt; float: left; margin-bottom: 5pt; margin-top: 1pt;" /></a></center>
+</td></tr></table></center>
+</div>
+<div style="clear: both;"></div>
+
+<div style="display:none">
+<center><h2 style="margin-top:10pt; margin-bottom:10pt">Самое популярное:</h2></center>
+<div id="komputer" style="display:none">
+<div  class="bloki_index"  id="bloki_opis_index" style="white-space: nowrap; overflow: hidden;color:#6D81BB; border-color:#6D81BB; border-style:solid;border-width:2pt; padding: 2pt; border-radius:7pt; font-weight: bold; cursor: pointer; margin-bottom: 8pt;display: inline-block;margin-right: 2pt; width:71pt;background: linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt);" onclick="bloki_index2('bloki_opis_index','bloki_opis2')"><img class="ikon" src="img/fon/men/ogran.png" style="height:13pt; margin-left:1pt;margin-top:2pt"/><center>СТАТЬИ</center></div>
+
+<div class="bloki_index" id="bloki_nag_index" style="white-space: nowrap; overflow: hidden;color:#6D81BB; border-color:#6D81BB; border-style:solid;border-width:2pt; padding: 2pt; border-radius:7pt; font-weight: bold; cursor: pointer; margin-bottom: 8pt;display: inline-block;margin-right: 2pt; width:112pt;background: linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt);"  onclick="bloki_index2('bloki_nag_index','bloki_nag2')"><img class="ikon" src="img/fon/men/nagruzka.png" style="height:14pt; margin-left:1pt;margin-top:2pt"/><center>УПРАЖНЕНИЯ</center></div>
+
+<div class="bloki_index" id="bloki_tren_index" style="white-space: nowrap; overflow: hidden;color:#6D81BB; border-color:#6D81BB; border-style:solid;border-width:2pt; padding: 2pt; border-radius:7pt; font-weight: bold; cursor: pointer; margin-bottom: 8pt;display: inline-block;margin-right: 2pt; width:115pt; color: #6D81BB; background: linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt);"
+onclick="bloki_index2('bloki_tren_index','bloki_tren01')"><img class="ikon" src="img/fon/men/tren.png" style="height:12pt; margin-left:1pt;margin-top:2pt"/><center>ТРЕНИРОВКИ</center></div>
+
+<div class="bloki_index" id="bloki_kalk_index" style="white-space: nowrap; overflow: hidden;color:#6D81BB; border-color:#6D81BB; border-style:solid;border-width:2pt; padding: 2pt; border-radius:7pt; font-weight: bold; cursor: pointer; margin-bottom: 8pt;display: inline-block; width:120pt; margin-right: 2pt;background: linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt);" onclick="bloki_index2('bloki_kalk_index','bloki_kalk2')"><img class="ikon" src="img/fon/men/dop.png" style=" height:14pt; margin-left:1pt;margin-top:2pt"/><center>КАЛЬКУЛЯТОРЫ</center></div>
+
+<div class="bloki_index" id="bloki_dieta_index" style="white-space: nowrap; overflow: hidden;color:#6D81BB; border-color:#6D81BB; border-style:solid;border-width:2pt; padding: 2pt; border-radius:7pt; font-weight: bold; cursor: pointer; margin-bottom: 8pt;display: inline-block; width:65pt;background: linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt);" onclick="bloki_index2('bloki_dieta_index','bloki_dieta2')">
+<img class="ikon" src="img/fon/men/dieta.png" style=" height:14pt; margin-left:1pt;margin-top:2pt"/><center>ДИЕТЫ</center></div>
+</div>
+<div class="bloki" id="bloki_tren1" onclick="bloki_t()">ТРЕНИРОВКИ</div>
+<div id="bloki_tren01"  style="margin-bottom: 12pt;">
+<ol  class="spisok_st sp_tr" id="vse_an3" style="margin-left: -18pt;">
+<li><a class='qjq' href='tren_zal/novichki_devyhcki2.html'><img class='tr_pr' src='img/tren/189.jpg'>Программа тренировок для новичков - девушки</a><br>Сложность: <img src='img/fon/slog0.png' height='16pt' /><div style='clear:both'></div></li>
+<li><a class='qjq' href='tren_zal/novichki_parni.html'><img class='tr_pr' src='img/tren/228.jpg'>Программа тренировок для новичков - мужчины</a><br>Сложность: <img src='img/fon/slog0.png' height='16pt' /><div style='clear:both'></div></li>
+<li><a class='qjq' href='tren_doma/doma.html'><img class='tr_pr' src='img/tren/261.jpg'>Тренировки в домашних условиях, или - как накачаться дома</a><br>Сложность: <img src='img/fon/slog1.png' height='16pt' /><br>Инвентарь: гантели, турник, брусья<div style='clear:both'></div></li>
+<li><a class='qjq' href='tren_zal/plan_na_2_trenirovki.html'><img class='tr_pr' src='img/tren/73.jpg'>Универсальный комплекс упражнений для мужчин на 2 тренировки в неделю</a><br>Сложность: <img src='img/fon/slog3.png' height='16pt' /><div style='clear:both'></div></li>
+<li><a class='qjq' href='tren_zal/krygovaia_trenirovka_devyshki.html'><img class='tr_pr' src='img/tren/15.jpg'>Круговые тренировки в тренажёрном зале для девушек</a><br>Сложность: <img src='img/fon/slog3.png' height='16pt' /><div style='clear:both'></div></li>
+</ol>
+</div>
+<div class="bloki" id="bloki_nag" onclick="bloki_index()">УПРАЖНЕНИЯ</div>
+<div id="bloki_nag2" style="max-width:360pt; margin: 0 auto; margin-bottom: 12pt;"></div>
+<div class="bloki" id="bloki_kalk" onclick="bloki('kalk')">КАЛЬКУЛЯТОРЫ</div>
+<div id="bloki_kalk2" style="display: none;margin-bottom: 12pt">
+<ol  class="spisok_st" id="vse_an3">
+<li><a href="kalk/trener_online.html" class="qjq">Индивидуальный подбор комплекса упражнений «Тренер Онлайн»</a></li>
+<li><a href="kalk/potreblenie_kalorii.html" class="qjq">Счётчик потребления калорий</a></li>
+<li><a href="kalk/rashod_kalorii.html" class="qjq">Калькулятор расхода калорий за сутки</a></li>
+<li><a href="kalk/energozatrati_trenirovka.html" class="qjq">Подсчёт энергозатрат за одну тренировку</a></li>
+<li><a href="kalk/podkojnui_jir.html" class="qjq">Определение количества подкожного жира</a></li>
+</ol></div>
+
+<div class="bloki" id="bloki_opis" onclick="bloki('opis')">СТАТЬИ</div>
+<div id="bloki_opis2" style="margin-bottom: 12pt">
+<ol  class="spisok_st" id="vse_an3">
+<li><a href="pit/nabrat_massu.html" class="qjq">Сколько нужно потреблять калорий для набора массы</a></li>
+<li><a href="met/sostavit_programmy_trenirovok.html" class="qjq">Как самому составить программу тренировок в тренажёрном зале</a></li>
+<li><a href="fiz/pohydet_trenagerniy_zal.html" class="qjq">Можно ли похудеть в тренажёрном зале?</a></li>
+<li><a href="met/grija.html" class="qjq">Упражнения при грыжах межпозвоночного диска</a></li>
+<li><a href="spit/protein_pohudenie.html" class="qjq">Как похудеть с помощью протеина</a></li>
+</ol></div>
+
+<div class="bloki" id="bloki_dieta" onclick="bloki('dieta')">ДИЕТЫ</div>
+<div id="bloki_dieta2" style="margin-bottom: 12pt">
+<ol  class="spisok_st" id="vse_an3">
+<li><a href="pitanie/meniu_dlia_nabora_vesa.html" class="qjq">Мужская диета для набора веса</a></li>
+<li><a href="pitanie/meniu_dlia_nabora_vesa2.html" class="qjq">Женская диета для набора веса</a></li>
+<li><a href="pitanie/dieta_relief.html" class="qjq">Женская низкоуглеводная диета для жиросжигания и сушки</a></li>
+<li><a href="pitanie/dieta_relief2.html" class="qjq">Мужская низкоуглеводная диета для жиросжигания и сушки</a></li>
+<li><a href="pitanie/meniu_dlia_podderjania_vesa.html" class="qjq">Женская диета для поддержания веса</a></li>
+</ol>
+</div>
+</div>
+
+
+<div id="rez" ></div>
+
+<div id="komputer" >
+<center><h2 style="margin-top:14pt">Новинки:</h2></center>
+<div style="border-color:#6D81BB; border-style:solid;border-width:2pt; border-radius:7pt; margin-bottom: 15pt;">
+<table cellpadding="5" cellspacing="0" style="vertical-align: top">
+
+<tr><td>
+<a href="met/inventar2.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/inventar2.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="met/inventar2.html" style="font-weight:bold" class="qjq">Какой спортивный инвентарь купить для домашних тренировок по степени важности</a><br>13-01-2026
+</td></tr>
+
+
+<tr><td>
+<a href="fiz/skolko_dvigatsa.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/skolko_dvigatsa.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="fiz/skolko_dvigatsa.html" style="font-weight:bold" class="qjq">Сколько нужно двигаться каждому человеку?</a><br>29-12-2025
+</td></tr>
+
+
+<tr><td>
+<a href="fiz/podrostki_ves.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/podrostki_ves.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="fiz/podrostki_ves.html" style="font-weight:bold" class="qjq">Подросткам вредно тренироваться с железом и большими весами. Правда ли?</a><br>25-12-2025
+</td></tr>
+
+<tr><td>
+<a href="met/svo_rez.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/svo_rez.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="met/svo_rez.html" style="font-weight:bold" class="qjq">Так вы снижаете свой результат прямо на тренировке</a><br>24-12-2025
+</td></tr>
+
+
+
+<tr><td>
+<a href="aer/hodba_int.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/hodba_int.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="aer/hodba_int.html" style="font-weight:bold" class="qjq">Интервальная ходьба – замена 10000 шагов в день</a><br>18-12-2025
+</td></tr>
+
+
+
+<tr><td>
+<a href="met/razn_mi.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/razn_mi.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="met/razn_mi.html" style="font-weight:bold" class="qjq">Разным мышцам нужен разный тренировочный объём (количество подходов в неделю)</a><br>16-12-2025
+</td></tr>
+
+
+
+<tr><td>
+<a href="met/metodi_massa_m.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/metodi_massa_m.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="met/metodi_massa_m.html" style="font-weight:bold" class="qjq">Самые рабочие методы тренировок при наращивании мышечной массы</a><br>27-11-2025
+</td></tr>
+
+
+<tr><td>
+<a href="met/prohodka.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/prohodka.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="met/prohodka.html" style="font-weight:bold" class="qjq">Что такое проходка? Зачем и как часто её делать?</a><br>21-11-2025
+</td></tr>
+
+
+
+<tr><td>
+<a href="tra/ple_jim.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/psiho.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="tra/ple_jim.html" style="font-weight:bold" class="qjq">Боль в плече при жиме и подтягиваниях: причины, ошибки и план возвращения к тренировкам</a><br>19-11-2025
+</td></tr>
+
+
+
+<tr><td>
+<a href="spit/dobavki_50.html" style="font-weight:bold" class="qjq"></a><img src="https://apptrener.com/images/dobavki_50.jpg" style="height: 80pt; width: 80pt; margin-right: 10pt; float: left; margin-bottom: 2pt; margin-top: 5pt;" /></a>
+<a href="spit/dobavki_50.html" style="font-weight:bold" class="qjq">2 самые важные пищевые добавки в возрасте 50+</a><br>11-11-2025
+</td></tr>
+
+
+
+
+
+</table></div>
+</div>
+
+
+
+
+
+
+
+<script type="text/jscript">
+$( "#bloki_opis_index" ).hover(function() {$('#bloki_opis_index').css('color','#E89F09');$('#bloki_opis_index').css('border-color','#E89F09');$('#bloki_opis_index').css('background', 'linear-gradient(90deg, rgba(232,159,9,1) 0pt, rgba(232,159,9,1) 6pt, rgba(255,255,255,0) 26pt)')},
+function() {if($('#bloki_opis2').css('display') == 'none'){
+$('#bloki_opis_index').css('color','#6D81BB');$('#bloki_opis_index').css('border-color','#6D81BB');
+ $('#bloki_opis_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')}});
+
+$( "#bloki_nag_index" ).hover(function() {$('#bloki_nag_index').css('color','#E89F09');$('#bloki_nag_index').css('border-color','#E89F09');$('#bloki_nag_index').css('background', 'linear-gradient(90deg, rgba(232,159,9,1) 0pt, rgba(232,159,9,1) 6pt, rgba(255,255,255,0) 26pt)')},
+function() {if($('#bloki_nag2').css('display') == 'none'){
+$('#bloki_nag_index').css('color','#6D81BB');$('#bloki_nag_index').css('border-color','#6D81BB');
+ $('#bloki_nag_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')}});
+
+$( "#bloki_tren_index" ).hover(function() {$('#bloki_tren_index').css('color','#E89F09');$('#bloki_tren_index').css('border-color','#E89F09');$('#bloki_tren_index').css('background', 'linear-gradient(90deg, rgba(232,159,9,1) 0pt, rgba(232,159,9,1) 6pt, rgba(255,255,255,0) 26pt)')},
+function() {if($('#bloki_tren01').css('display') == 'none'){
+$('#bloki_tren_index').css('color','#6D81BB');$('#bloki_tren_index').css('border-color','#6D81BB');
+ $('#bloki_tren_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')}});
+
+$( "#bloki_kalk_index" ).hover(function() {$('#bloki_kalk_index').css('color','#E89F09');$('#bloki_kalk_index').css('border-color','#E89F09');$('#bloki_kalk_index').css('background', 'linear-gradient(90deg, rgba(232,159,9,1) 0pt, rgba(232,159,9,1) 6pt, rgba(255,255,255,0) 26pt)')},
+function() {if($('#bloki_kalk2').css('display') == 'none'){
+$('#bloki_kalk_index').css('color','#6D81BB');$('#bloki_kalk_index').css('border-color','#6D81BB');
+ $('#bloki_kalk_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')}});
+
+$( "#bloki_dieta_index" ).hover(function() {$('#bloki_dieta_index').css('color','#E89F09');$('#bloki_dieta_index').css('border-color','#E89F09');$('#bloki_dieta_index').css('background', 'linear-gradient(90deg, rgba(232,159,9,1) 0pt, rgba(232,159,9,1) 6pt, rgba(255,255,255,0) 26pt)')},
+function() {if($('#bloki_dieta2').css('display') == 'none'){
+$('#bloki_dieta_index').css('color','#6D81BB');$('#bloki_dieta_index').css('border-color','#6D81BB');
+ $('#bloki_dieta_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')}});
+
+function bloki_index2(met,met2){
+if($('#'+met2).css('display') != 'none'){$('#'+met).css('color','#6D81BB');$('#'+met).css('border-color','#6D81BB');
+ $('#'+met).css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')}
+else{
+$('#bloki_tren01').css('display','none');$('#bloki_nag2').css('display','none');$('#bloki_kalk2').css('display','none');$('#bloki_opis2').css('display','none');$('#bloki_dieta2').css('display','none')
+
+$('#bloki_opis_index').css('color','#6D81BB');$('#bloki_opis_index').css('border-color','#6D81BB');
+ $('#bloki_opis_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)');
+
+$('#bloki_nag_index').css('color','#6D81BB');$('#bloki_nag_index').css('border-color','#6D81BB');
+ $('#bloki_nag_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')
+
+$('#bloki_tren_index').css('color','#6D81BB');$('#bloki_tren_index').css('border-color','#6D81BB');
+ $('#bloki_tren_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')
+
+$('#bloki_kalk_index').css('color','#6D81BB');$('#bloki_kalk_index').css('border-color','#6D81BB');
+ $('#bloki_kalk_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')
+
+$('#bloki_dieta_index').css('color','#6D81BB');$('#bloki_dieta_index').css('border-color','#6D81BB');
+ $('#bloki_dieta_index').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0pt, rgba(109,129,187,1) 6pt, rgba(255,255,255,0) 26pt)')
+
+$('#'+met).css('color','#E89F09');$('#'+met).css('border-color','#E89F09');$('#'+met).css('background', 'linear-gradient(90deg, rgba(232,159,9,1) 0pt, rgba(232,159,9,1) 6pt, rgba(255,255,255,0) 26pt)')}
+$('#'+met2).slideToggle(); if(met2=='bloki_nag2'){
+pokaz_upr('bloki_nag2')}}
+
+if(document.location.href.indexOf('tvoytrener.com') != -1){$('#komputer3').css('display','block')}
+if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)){}
+else{$('.bloki, .bloki_tren').css('display','none');$('#komputer, #komputer2').css('display','block')}
+function bloki_index(met){
+if($('#bloki_nag2').css('display') != 'none'){$('#bloki_nag').css('color','#6D81BB');$('#bloki_nag').css('border-color','#6D81BB');
+ $('#bloki_nag').css('background', 'linear-gradient(90deg, rgba(109,129,187,1) 0%, rgba(109,129,187,1) 4%, rgba(255,255,255,0) 20%)');$('#bloki_nag2').slideToggle();}
+else{$('#bloki_nag').css('color','#E89F09');$('#bloki_nag').css('border-color','#E89F09');$('#bloki_nag').css('background', 'linear-gradient(90deg, rgba(232,159,9,1) 0%, rgba(232,159,9,1) 4%, rgba(255,255,255,0) 20%)');$('#bloki_nag2').slideToggle();pokaz_upr('bloki_nag2')}}
+
+var bloki_nag2 = "<ol id='vse_an' >\
+<li><a  class='qjq' href='yprajnenia/giperekstenzia.html'>Гиперэкстензия (наклоны через козла)</a></li>\
+<li><a  class='qjq' href='yprajnenia/skrychivania_na_lavke.html'>Скручивания на наклонной лавке</a></li>\
+<li><a  class='qjq' href='yprajnenia/jim_gantelei_sidia.html'>Жим гантелей сидя / стоя</a></li>\
+<li><a  class='qjq' href='yprajnenia/razgibanie_ryk_verhnii_blok.html' >Разгибание рук с верхнего блока</a></li>\
+<li><a  class='qjq' href='yprajnenia/podtiagivania_shiroko.html' >Подтягивания широким хватом к груди</a></li>\
+</ol>"
+if(document.location.href.indexOf('tvoytrener.com') == -1){
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {if (/iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {var os = 'ios'} else {var os = 'android'}}
+else {var os = 'komp'}
+$.ajax({
+type: "POST", 
+url: "https://apptrener.com/app_php/obnovlenie.php",
+data: {versia:"2700", os:os},
+crossDomain: true,
+success: function(rez) {
+document.getElementById('rez').innerHTML= rez;}});
+}
+</script>
+
+
+<div id="trenerovka" style="margin-top:5pt"></div>
+<div id="trenerovka_ydal" onclick="uvereni()" style="color:#F00;font-size:120%; cursor:pointer; margin-bottom:5pt; margin-top:5pt"></div>
+<div id="dieta"></div><div id="dieta_ydal" onclick="uvereni2()" style="color:#F00;font-size:120%; cursor:pointer; margin-bottom:5pt; margin-top:5pt"></div>
+
+<script type="text/jscript" >
+
+function uvereni() {$(".uvereni").fadeIn('slow');}
+
+function no() {setTimeout(function(){$('.uvereni').fadeOut('slow')},200);}
+ 
+function removeProjectFromLocalStorage() {
+setTimeout(function(){$('.uvereni').fadeOut('fast')});
+$(".udaleno").fadeIn('slow');
+setTimeout(function(){$('.udaleno').fadeOut('slow')},2500);
+document.getElementById('trenerovka_ydal').innerHTML= "";
+document.getElementById('trenerovka').innerHTML= "";
+localStorage.removeItem("svoiatren");
+localStorage.removeItem("zagolovok");}
+
+function uvereni2() {$(".uvereni2").fadeIn('slow');}
+
+function no2() {setTimeout(function(){$('.uvereni2').fadeOut('slow')},200);}
+ 
+function removeProjectFromLocalStorage2() {
+setTimeout(function(){$('.uvereni2').fadeOut('fast')});
+$(".udaleno").fadeIn('slow');
+setTimeout(function(){$('.udaleno').fadeOut('slow')},2500);
+document.getElementById('dieta_ydal').innerHTML= "";
+document.getElementById('dieta').innerHTML= "";
+localStorage.removeItem("svoiadieta");
+localStorage.removeItem("zagolovok_dieta");}
+</script>
+
+
+
+<div id="rez_index"></div>
+<div id="rez7"></div><div id ="ssilki"></div>
+
+
+
+<script type="text/jscript">
+var vs_infa = '<img src="img/timko.gif" align="left" id="ekspert" /><p>Приветствую вас. На связи Тимко Илья - автор этого проекта. Надеюсь, что здесь вы найдёте ответы на все ваши вопросы, касающиеся фитнеса и ЗОЖ. И не забывайте периодически сохранять свои данные на сервер, чтобы они никуда не пропали (иконка шестерёнки вверху).</p><div id="reklama_d"></div><p>Если вы нашли какие-то баги, или есть какие-то пожелания, то пишите <a href="https://vk.com/tvoytrener1">мне в контакте</a> или на info@tvoytrener.com. По вопросам рекламы в этом приложении можете <a class="qjq" href="int/reklama.html">ознакомиться здесь</a>. Или написать мне на те же контакты.</p><p>P. S. У нас есть <a target="blank" href="https://your-internet-coach.com">английская версия сайта</a> (если вдруг кому интересно).</p><p><i><font color="#777">(Создатель - <a href="int/avtor.html" class="qjq">Тимко Илья</a>.)</font></i></p>'
+if(document.location.href.indexOf('tvoytrener.com') != -1){
+document.getElementById('rez_index').innerHTML = '';
+document.getElementById('rez7').innerHTML = vs_infa }
+else{
+if(Number(localStorage.getItem('kolvo_vh')) > 1){
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+           if (/iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {var os = 'ios'}
+      else {var os = 'android'}}
+else {var os = 'komp'}
+
+$.ajax({
+type: "POST",
+dataType: "html", 
+url: "https://apptrener.com/app_php/poblagodarit3.php",
+data: {os:os, versia:versia},
+crossDomain: true,
+success: function(rez) {
+$('#rez_index').html(rez);
+setTimeout(function( ){
+document.getElementById('blago').innerHTML = '<iframe ' + width7 + height7 + /*' src="https://www.youtube.com/embed/nCpfm8FAbL0" frameborder="0" allowfullscreen></iframe>'*/' src="https://rutube.ru/play/embed/4e3b9ba9514ecb59bf0d95f78f1db39b/"></iframe>'
+},1222)
+;},
+error: function(){},
+timeout: 6000 });
+
+
+
+document.getElementById('rez7').innerHTML = '<center><h2 >Немного о приложении</h2></center>' + vs_infa+ '<p>Версия приложения: 27.0</p>'}
+else{
+document.getElementById('rez_index').innerHTML = vs_infa + '<p>Версия приложения: 27.0</p>'
+}}
+
+if(os == 'komp'){document.getElementById('rez7').innerHTML = document.getElementById('rez7').innerHTML+ "<p>Скачать автономную версию сайта <a href='https://drive.google.com/file/d/1LmHnGsJOG0IIZkyvDt-SNWRzolaGbdIz/view?usp=sharing' target='_blank'>для компьютера</a> / <a href='https://disk.yandex.ru/d/w7BJ0qRjRdTVLQ' target='_blank'>резервная ссылка</a><br>Установить приложение <a href='https://play.google.com/store/apps/details?id=com.tvoytrener.timkoilia'>на Андроид</a><br>Установить приложение <a href='https://itunes.apple.com/ru/app/%D1%82%D0%B2%D0%BE%D0%B9-%D1%82%D1%80%D0%B5%D0%BD%D0%B5%D1%80/id1299904851?mt=8'>на Айфон</a></p>"}
+</script>
+
+<div class="udaleno2">Ссылка удалена</div>
+<div class="uvereni2" >Точно удалить?
+<center><table width="100%" border="0" cellspacing="0" cellpadding="6" style="width:100pt">
+<tr style="text-align:center">
+<td style="cursor:pointer" onClick="removeProjectFromLocalStorage2()">ДА</td>
+<td style="cursor:pointer" onClick="no2()">НЕТ</td>
+</tr></table></center>
+</div>
+
+
+<div class="udaleno">Ссылка удалена</div>
+<div class="uvereni" >Точно удалить?
+<center><table width="100%" border="0" cellspacing="0" cellpadding="6" style="width:100pt">
+<tr style="text-align:center">
+<td style="cursor:pointer" class = "da_net" onClick="removeProjectFromLocalStorage()">ДА</td>
+<td style="cursor:pointer" class = "da_net" onClick="no()">НЕТ</td>
+</tr></table></center>
+</div>
+
+
+
+<div id="per_vod"></div>
+
+ <div class="bloki" id="comments84" onclick="bloki_kom()">КОММЕНТАРИИ</div><div id="comments"></div><center><div id="like"></div></center>
+
+<div class="skopir" id="skopir" ></div>
+<div id="tr_op"></div>
+<script type="text/jscript" charset="utf-8" src="js/ves.js"></script>
+<script type="text/jscript" charset="utf-8" src="js/poisk.js"></script>
+<script type="text/jscript" charset="utf-8" src="js/svoia_tren.js"></script>
+
+   <script src="jquery-ui.min.js"></script>
+
+
+
+<?php if(!defined('_SAPE_USER')){
+define('_SAPE_USER', 'ac074dbb9d6087eba7b8191be8fda36f');}
+require_once(realpath($_SERVER['DOCUMENT_ROOT'].'/'._SAPE_USER.'/sape.php'));
+$o = array();
+$o['charset'] = 'utf-8';
+$client = new SAPE_client($o);
+unset($o);?>
+
+<!-- Yandex.Metrika informer -->
+<a href="https://metrika.yandex.ru/stat/?id=12462358&amp;from=informer"
+target="_blank" rel="nofollow"><img src="https://informer.yandex.ru/informer/12462358/3_1_FFFFFFFF_EFEFEFFF_0_pageviews"
+style="width:88px; height:31px; border:0; display:none" alt="Яндекс.Метрика" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" class="ym-advanced-informer" data-cid="12462358" data-lang="ru" /></a>
+<!-- /Yandex.Metrika informer -->
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym(96841122, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true
+   });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/96841122" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+</td><td id="r_b"><? echo $client->return_links(); ?></td>
+</tr></table>
+<div class="param" id="param" onClick="param()" >Идёт загрузка с сервера. Подождите немного...</div>
+</div></body>
+</html>
