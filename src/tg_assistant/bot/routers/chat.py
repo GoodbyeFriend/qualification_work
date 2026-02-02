@@ -307,8 +307,14 @@ async def voice_handler(
     chroma: ChromaService | None,
     speech_to_text: SpeechToTextService | None,
 ) -> None:
+    from tg_assistant.config import settings
+
     voice = message.voice
     if voice is None:
+        return
+
+    if shutil.which("ffmpeg") is None:
+        await message.answer("ffmpeg не найден. Установи ffmpeg для обработки голосовых сообщений.")
         return
 
     status = await message.answer("Распознаю голосовое сообщение...")
