@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import logging
 from pathlib import Path
-import shutil
 from typing import Any
 
 from aiogram import Router, F
@@ -18,6 +17,8 @@ from tg_assistant.config import settings
 from tg_assistant.services.ollama_service import OllamaService
 from tg_assistant.services.chroma_service import ChromaService
 from tg_assistant.services.speech_to_text import SpeechToTextService
+from tg_assistant.services.ollama_service import OllamaService
+from tg_assistant.services.chroma_service import ChromaService
 
 logger = logging.getLogger(__name__)
 router = Router()
