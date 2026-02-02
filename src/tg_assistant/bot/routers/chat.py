@@ -10,26 +10,16 @@ from sqlalchemy import select
 from tg_assistant.services.rerank_service import RerankService
 from tg_assistant.db.models.files import StoredFile
 from tg_assistant.db.models.user import User
+from tg_assistant.db.models.link import Link
 from tg_assistant.services.ollama_service import OllamaService
 from tg_assistant.services.chroma_service import ChromaService
-from tg_assistant.db.models.link import Link
-
 
 logger = logging.getLogger(__name__)
 router = Router()
 
-FILE_INTENT_KEYWORDS = {
-    "файл", "документ", "pdf", "docx", "скинь", "пришли", "отправь", "верни", "дай",
-}
-
 FILE_DISTANCE_THRESHOLD = 0.90
+LINK_DISTANCE_THRESHOLD = 0.90
 AMBIGUOUS_DELTA = 0.05
-
-
-def wants_file(text: str) -> bool:
-    t = text.lower()
-    return any(k in t for k in FILE_INTENT_KEYWORDS)
-from tg_assistant.db.models.link import Link
 
 def pick_best_links(hits: list[dict[str, Any]]) -> list[dict[str, Any]]:
     link_hits = [h for h in hits if (h.get("metadata") or {}).get("entity_type") == "link"]
@@ -203,8 +193,38 @@ async def chat_handler(
                 await status.edit_text("Похожих ссылок не нашлось. Попробуй уточнить или посмотри /links")
                 return
 
-            best = candidates[0]
+            if len(candidates) >= 2:
+                d0 = float(candidates[0].get("distance") or 999.0)
+                d1 = float(candidates[1].get("distance") or 999.0)
+                if d0 <= LINK_DISTANCE_THRESHOLD and (d1 - d0) >= AMBIGUOUS_DELTA:
+                    reranked_links = candidates[:1]
+                else:
+                    await status.edit_text("Нашёл кандидатов, уточняю релевантность (rerank)...")
+                    reranked_links = await reranker.rerank_hits_oneshot(
+                        search_query,
+                        candidates[:8],
+                        max_items=min(8, len(candidates)),
+                        timeout_s=240,
+                    )
+            else:
+                reranked_links = candidates[:1]
+
+            best = reranked_links[0]
             link_id = int(best["metadata"]["entity_id"])
+            best_distance = float(best.get("distance") or 999.0)
+
+            if best_distance > LINK_DISTANCE_THRESHOLD:
+                lines = ["Нашёл несколько похожих ссылок, но не уверен. Выбери вручную:"]
+                for c in candidates[:3]:
+                    m = c["metadata"]
+                    title = m.get("title") or m.get("url") or "без названия"
+                    lines.append(
+                        f"#{m['entity_id']} — {title} "
+                        f"(dist={float(c.get('distance') or 0.0):.3f})"
+                    )
+                lines.append("Можно отправить так: /link ID")
+                await status.edit_text("\n".join(lines))
+                return
 
             stmt = select(Link).where(Link.id == link_id, Link.user_id == current_user.id)
             res = await session.execute(stmt)
