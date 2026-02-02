@@ -1,6 +1,10 @@
 services:
   bot:
     build: .
+    device_requests:
+      - driver: nvidia
+        count: all
+        capabilities: [gpu]
     
     env_file:
       - .env
