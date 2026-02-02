@@ -1,9 +1,16 @@
 services:
   bot:
     build: .
+    device_requests:
+      - driver: nvidia
+        count: all
+        capabilities: [gpu]
     
     env_file:
       - .env
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     volumes:
       - ./:/app
       - ./data:/data
