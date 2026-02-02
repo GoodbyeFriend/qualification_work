@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import asyncio
 import logging
+from pathlib import Path
 from typing import Any
 
 from aiogram import Router, F
@@ -75,18 +77,19 @@ def pick_best_files(hits: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
     return sorted(best_by_file.values(), key=lambda x: x["distance"])
 
-@router.message(F.text & ~F.text.startswith("/"))
-async def chat_handler(
+async def handle_text_query(
     message: Message,
     session,
     current_user: User,
     ollama: OllamaService,
     chroma: ChromaService | None,
+    text: str,
+    status_message: Message | None = None,
 ) -> None:
-    text = (message.text or "").strip()
+    text = text.strip()
     if not text:
         return
-    status = await message.answer("Определяю тип запроса")
+    status = status_message or await message.answer("Определяю тип запроса")
 
     intent_data = await ollama.classify_intent(text)
     intent = (intent_data or {}).get("intent", "qa")
@@ -267,3 +270,109 @@ async def chat_handler(
             await status.edit_text("Ошибка при обработке запроса. Посмотри логи бота.")
         except Exception:
             pass
+
+
+async def convert_voice_to_wav(source_path: Path, target_path: Path) -> None:
+    process = await asyncio.create_subprocess_exec(
+        "ffmpeg",
+        "-y",
+        "-i",
+        str(source_path),
+        "-ar",
+        "16000",
+        "-ac",
+        "1",
+        str(target_path),
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await process.communicate()
+    if process.returncode != 0:
+        raise RuntimeError(
+            f"ffmpeg failed with code {process.returncode}: {stderr.decode(errors='ignore') or stdout.decode(errors='ignore')}"
+        )
+
+
+@router.message(F.voice)
+async def voice_handler(
+    message: Message,
+    bot,
+    session,
+    current_user: User,
+    ollama: OllamaService,
+    chroma: ChromaService | None,
+    speech_to_text: SpeechToTextService | None,
+) -> None:
+    voice = message.voice
+    if voice is None:
+        return
+
+    status = await message.answer("Распознаю голосовое сообщение...")
+
+    base_dir = Path(settings.data_dir) / "voice" / str(current_user.id)
+    base_dir.mkdir(parents=True, exist_ok=True)
+
+    file_key = voice.file_unique_id or voice.file_id
+    ogg_path = base_dir / f"voice_{file_key}.ogg"
+    wav_path = base_dir / f"voice_{file_key}.wav"
+
+    try:
+        file = await bot.get_file(voice.file_id)
+        await bot.download_file(file.file_path, destination=ogg_path)
+
+        await convert_voice_to_wav(ogg_path, wav_path)
+    except Exception:
+        logger.exception("Failed to download or convert voice message")
+        await status.edit_text("Не удалось обработать голосовое сообщение. Проверь ffmpeg и попробуй снова.")
+        ogg_path.unlink(missing_ok=True)
+        wav_path.unlink(missing_ok=True)
+        return
+
+    if speech_to_text is None:
+        await status.edit_text("Распознавание голоса не настроено.")
+        ogg_path.unlink(missing_ok=True)
+        wav_path.unlink(missing_ok=True)
+        return
+
+    try:
+        transcript = await speech_to_text.transcribe(wav_path)
+    except Exception:
+        logger.exception("Speech-to-text failed")
+        await status.edit_text("Не удалось распознать голосовое сообщение.")
+        return
+    finally:
+        ogg_path.unlink(missing_ok=True)
+        wav_path.unlink(missing_ok=True)
+
+    if not transcript:
+        await status.edit_text("Не удалось распознать текст из голосового сообщения.")
+        return
+
+    await status.edit_text(f"Распознал: {transcript}\nОбрабатываю запрос...")
+    await handle_text_query(
+        message=message,
+        session=session,
+        current_user=current_user,
+        ollama=ollama,
+        chroma=chroma,
+        text=transcript,
+        status_message=status,
+    )
+
+
+@router.message(F.text & ~F.text.startswith("/"))
+async def chat_handler(
+    message: Message,
+    session,
+    current_user: User,
+    ollama: OllamaService,
+    chroma: ChromaService | None,
+) -> None:
+    await handle_text_query(
+        message=message,
+        session=session,
+        current_user=current_user,
+        ollama=ollama,
+        chroma=chroma,
+        text=(message.text or ""),
+    )
